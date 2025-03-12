@@ -38,7 +38,7 @@ class GridCuadricula:
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill=fill_color, outline="black")
 
 if __name__ == "__main__":
-    matriz = cargar_matriz("matriz.txt")
+    matriz = cargar_matriz(r"C:\Users\sheil\OneDrive\Escritorio\proyecto01\src\matriz.txt")
 
     root = tk.Tk()
     app = GridCuadricula(root, matriz)
