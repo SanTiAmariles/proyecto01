@@ -1,4 +1,5 @@
 import tkinter as tk
+import os
 
 def cargar_matriz(archivo):
     with open(archivo, "r") as f:
@@ -38,12 +39,11 @@ class GridCuadricula:
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill=fill_color, outline="black")
 
 if __name__ == "__main__":
-    matriz = cargar_matriz(r"C:\Users\sheil\OneDrive\Escritorio\proyecto01\src\matriz.txt")
+    #print("Directorio actual:", os.getcwd())
+    ruta = ruta = os.path.join("src", "matriz.txt")
+    #print("Ruta: ", ruta)
+    matriz = cargar_matriz(ruta)
 
     root = tk.Tk()
     app = GridCuadricula(root, matriz)
     root.mainloop()
-
-
-
-
