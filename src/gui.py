@@ -50,7 +50,7 @@ def gui():
 	marcoPrincipal.pack(padx=20, pady=20)
  
 	#Crear el botón de Importar
-	bImportar = ttk.Button(marcoPrincipal, text="Importar archivo", command=lambda: funcionesGUI.selectFile(bImportar))
+	bImportar = ttk.Button(marcoPrincipal, text="Importar archivo", command=lambda: funcionesGUI.selectFile(bImportar,marcoPrincipal, cell_size, canvas))
 	bImportar.pack(padx=10, pady=10)
  
 	# Crear un Frame para contener el canvas
@@ -64,9 +64,36 @@ def gui():
 	canvas.pack()
  
 	# Dibujar la cuadrícula
-	grid = GridCuadricula(marcoPrincipal, matriz, cell_size)
+	matrizInicial = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+	grid = GridCuadricula(marcoPrincipal, matrizInicial, cell_size)
 	grid.dibujar_cuadricula(canvas)
-
+ 
+	#Crear Botones Tipo de Búsqueda
+	bNoInformada = ttk.Button(marcoPrincipal, text="No Informada", command=lambda: funcionesGUI.noInformada())
+	bNoInformada.pack(padx=10, pady=10)
+	bInformada = ttk.Button(marcoPrincipal, text="No Informada", command=lambda: funcionesGUI.noInformada())
+	
+ 
+	#Crear Radio Buttons No Informada
+	opcionNoInformada = tk.StringVar(value="amplitud")
+	rbAmplitud = tk.Radiobutton(marcoPrincipal, text="Amplitud", variable=opcionNoInformada, value="amplitud")
+	rbCostoUniforme = tk.Radiobutton(marcoPrincipal, text="Costo Uniforme", variable=opcionNoInformada, value="uniforme")
+	rbProfundidad = tk.Radiobutton(marcoPrincipal, text="Profundidad evitando ciclos", variable=opcionNoInformada, value="profundidad")
+	rbAmplitud.pack(padx=10, pady=10)
+	rbCostoUniforme.pack(padx=10, pady=10)
+	rbProfundidad.pack(padx=10, pady=10)
+ 
+	#Crear Radio Buttons Informada
+	bInformada.pack(padx=10, pady=10)
+	opcionInformada = tk.StringVar(value="avara")
+	rbAvara = tk.Radiobutton(marcoPrincipal, text="Avara", variable=opcionInformada, value="avara")
+	rbAEstrella = tk.Radiobutton(marcoPrincipal, text="A*", variable=opcionInformada, value="aEstrella")
+	rbAvara.pack(padx=10, pady=10)
+	rbAEstrella.pack(padx=10, pady=10)
+ 
+	#Crear botón búsqueda
+	bBuscar = ttk.Button(marcoPrincipal, text="Buscar Solución", command=lambda: funcionesGUI.buscar())
+	bBuscar.pack(padx=10, pady=10)
 
 	root.mainloop()
 
