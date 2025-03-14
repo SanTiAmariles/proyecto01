@@ -1,11 +1,13 @@
 import tkinter as tk
 from tkinter import filedialog as fd
 from tkinter.messagebox import showinfo
+import gui
+from no_informada import amplitud
 
 
 archivo = False
 
-def selectFile(boton):
+def selectFile(boton,marcoPrincipal, cell_size,canvas):
   global archivo
   matriz = []
   filetypes = [('text files', '*.txt')]
@@ -26,12 +28,20 @@ def selectFile(boton):
       title='Error',
       message="No ha seleccionado ningún archivo"
     )
+    return
     
   if archivo:
     with open(filename, "r", encoding="utf-8") as entrada:
       for linea in entrada:
-        valores = list(map(int, linea.strip().split()))
-        matriz.append(valores)
+        try:
+          valores = list(map(int, linea.strip().split()))
+          matriz.append(valores)
+        except:
+          showinfo(
+            title='Error',
+            message="El archivo seleccionado no es válido"
+          )
+          return
   
   if len(matriz)!=10:
     showinfo(
@@ -52,5 +62,17 @@ def selectFile(boton):
     message="Archivo procesado correctamente"
   )
   boton.config(state=tk.DISABLED)  
-  print(matriz)
+  print(matriz)  
+  grid = gui.GridCuadricula(marcoPrincipal, matriz, cell_size)
+  grid.dibujar_cuadricula(canvas)
+  
+def noInformada():
+  print("No informada")
+  
+def informada():
+  print("Informada")
+
+def buscar():
+  print("Buscar")
+  
     
