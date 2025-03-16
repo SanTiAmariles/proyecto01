@@ -39,61 +39,66 @@ class GridCuadricula:
     
 def gui():
     
-	ruta = os.path.join("src", "matriz.txt")
-	matriz = cargar_matriz(ruta)
+	#ruta = os.path.join("src", "matriz.txt")
+	#matriz = cargar_matriz(ruta)
+	matrizInicial = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
 	root = tk.Tk()
 	root.title("Proyecto 1 Inteligencia Artificial")
 
 	#Crear marco principal
 	marcoPrincipal = ttk.Frame(root)
-	marcoPrincipal.pack(padx=20, pady=20)
+	marcoPrincipal.grid(padx=20, pady=2)
  
 	#Crear el botón de Importar
-	bImportar = ttk.Button(marcoPrincipal, text="Importar archivo", command=lambda: funcionesGUI.selectFile(bImportar,marcoPrincipal, cell_size, canvas))
-	bImportar.pack(padx=10, pady=10)
+	bImportar = ttk.Button(marcoPrincipal, text="Importar archivo", command=lambda: funcionesGUI.selectFile(bImportar,marcoPrincipal, cell_size, canvas, marcoBotones))
+	bImportar.grid(row=0, column=0, columnspan=2, padx=10, pady=2)
  
 	# Crear un Frame para contener el canvas
 	frame = ttk.Frame(marcoPrincipal)
-	frame.pack(padx=10, pady=10) 	
+	frame.grid(row=1, column=0, columnspan=2, padx=10, pady=2)	
  
 	# Crear el canvas dentro del Frame
 	cell_size = 50
-	grid_size = len(matriz)
+	grid_size = len(matrizInicial)
 	canvas = tk.Canvas(frame, width=grid_size * cell_size, height=grid_size * cell_size)
-	canvas.pack()
+	canvas.grid()
  
 	# Dibujar la cuadrícula
-	matrizInicial = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 	grid = GridCuadricula(marcoPrincipal, matrizInicial, cell_size)
 	grid.dibujar_cuadricula(canvas)
  
+	# Contenedor de botones en dos columnas
+	marcoBotones = ttk.Frame(marcoPrincipal)
+	marcoBotones.grid(row=2, column=0, columnspan=2, padx=10, pady=2)
+ 
 	#Crear Botones Tipo de Búsqueda
-	bNoInformada = ttk.Button(marcoPrincipal, text="No Informada", command=lambda: funcionesGUI.noInformada())
-	bNoInformada.pack(padx=10, pady=10)
-	bInformada = ttk.Button(marcoPrincipal, text="No Informada", command=lambda: funcionesGUI.noInformada())
-	
+	bNoInformada = ttk.Button(marcoBotones, text="No Informada", command=lambda: funcionesGUI.noInformada(rbAmplitud, rbCostoUniforme, rbProfundidad, rbAvara, rbAEstrella, bBuscar))
+	bNoInformada.grid(row=0, column=0, padx=10, pady=10)
+	bInformada = ttk.Button(marcoBotones, text="Informada", command=lambda: funcionesGUI.informada(rbAmplitud, rbCostoUniforme, rbProfundidad, rbAvara, rbAEstrella, bBuscar))
+	bInformada.grid(row=0, column=1, padx=10, pady=10)
  
 	#Crear Radio Buttons No Informada
 	opcionNoInformada = tk.StringVar(value="amplitud")
-	rbAmplitud = tk.Radiobutton(marcoPrincipal, text="Amplitud", variable=opcionNoInformada, value="amplitud")
-	rbCostoUniforme = tk.Radiobutton(marcoPrincipal, text="Costo Uniforme", variable=opcionNoInformada, value="uniforme")
-	rbProfundidad = tk.Radiobutton(marcoPrincipal, text="Profundidad evitando ciclos", variable=opcionNoInformada, value="profundidad")
-	rbAmplitud.pack(padx=10, pady=10)
-	rbCostoUniforme.pack(padx=10, pady=10)
-	rbProfundidad.pack(padx=10, pady=10)
+	rbAmplitud = tk.Radiobutton(marcoBotones, text="Amplitud", variable=opcionNoInformada, value="amplitud", state="disabled")
+	rbCostoUniforme = tk.Radiobutton(marcoBotones, text="Costo Uniforme", variable=opcionNoInformada, value="uniforme", state="disabled")
+	rbProfundidad = tk.Radiobutton(marcoBotones, text="Profundidad evitando ciclos", variable=opcionNoInformada, value="profundidad", state="disabled")
+	rbAmplitud.grid(row=1, column=0, sticky="w", padx=10, pady=2)
+	rbCostoUniforme.grid(row=2, column=0, sticky="w", padx=10, pady=2)
+	rbProfundidad.grid(row=3, column=0, sticky="w", padx=10, pady=2)
  
 	#Crear Radio Buttons Informada
-	bInformada.pack(padx=10, pady=10)
 	opcionInformada = tk.StringVar(value="avara")
-	rbAvara = tk.Radiobutton(marcoPrincipal, text="Avara", variable=opcionInformada, value="avara")
-	rbAEstrella = tk.Radiobutton(marcoPrincipal, text="A*", variable=opcionInformada, value="aEstrella")
-	rbAvara.pack(padx=10, pady=10)
-	rbAEstrella.pack(padx=10, pady=10)
+	rbAvara = tk.Radiobutton(marcoBotones, text="Avara", variable=opcionInformada, value="avara", state="disabled")
+	rbAEstrella = tk.Radiobutton(marcoBotones, text="A*", variable=opcionInformada, value="aEstrella", state="disabled")
+	rbAvara.grid(row=1, column=1, sticky="w", padx=10, pady=2)
+	rbAEstrella.grid(row=2, column=1, sticky="w", padx=10, pady=2)
  
 	#Crear botón búsqueda
-	bBuscar = ttk.Button(marcoPrincipal, text="Buscar Solución", command=lambda: funcionesGUI.buscar())
-	bBuscar.pack(padx=10, pady=10)
+	bBuscar = ttk.Button(marcoBotones, text="Buscar Solución", command=lambda: funcionesGUI.buscar(opcionNoInformada, opcionInformada, bBuscar), state="disabled")
+	bBuscar.grid(row=4, column=0, columnspan=2, padx=10, pady=2)
+
+	marcoBotones.grid_remove()
 
 	root.mainloop()
 

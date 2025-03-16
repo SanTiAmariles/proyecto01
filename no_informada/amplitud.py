@@ -80,4 +80,4 @@ matriz = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
-crearCola(matriz, 2, 1, 3)
+#crearCola(matriz, 2, 1, 3)
