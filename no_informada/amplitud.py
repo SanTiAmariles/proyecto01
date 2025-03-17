@@ -16,8 +16,8 @@ class Nodo:
         operadores = [
             (1, 0),  # Derecha
             (-1, 0),  # Izquierda
-            (0, 1),  # Abajo
-            (0, -1)  # Arriba
+            (0, 1),  # Arriba
+            (0, -1)  # Abajo
         ]
 
         if self.faltan == 0:
@@ -65,19 +65,3 @@ def crearCola(matriz, x, y, cantPaquetes):
         print(nodoActual.posicionX, ",", nodoActual.posicionY)
         vecinos = nodoActual.expandir()
         cola.extend(vecinos)
-
-    
-matriz = [
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1],
-    [1, 1, 0, 1, 0, 1, 0, 1, 1, 1],
-    [0, 2, 0, 3, 4, 4, 0, 0, 0, 0],
-    [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-    [0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-    [3, 3, 0, 1, 0, 1, 1, 1, 1, 1],
-    [1, 1, 0, 1, 0, 0, 0, 0, 0, 0],
-    [1, 1, 0, 1, 1, 1, 1, 1, 1, 0],
-    [1, 1, 0, 0, 0, 0, 4, 0, 0, 0],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
-
-#crearCola(matriz, 2, 1, 3)
