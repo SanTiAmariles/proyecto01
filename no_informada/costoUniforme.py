@@ -1,184 +1,100 @@
-#El orden es derecha, izquierda, arriba, abajo
-"""
-Se puede implementar considerando la lista de nodos a expandir como una cola 
-de prioridad, donde la prioridad es el costo y se selecciona aquel con mejor prioridad
-"""
 import heapq
 import time
 
-arbol = []
-cola = []
-resultado=[]
-recogidos=[]
 matriz = []
 
 class Nodo:
-  def __init__(self,x, y, cantPaquetes, padre, costo, profundidad, expandidos):
-    self.posX = x
-    self.posY = y
-    self.faltan = cantPaquetes
-    self.padre = padre
+  #Constructor de la clase
+  def __init__(self,x, y,paquetes,costo,visitados,recogidos):
+    self.x = x
+    self.y = y
+    self.faltan = paquetes
     self.costoAcum = costo
-    self.profundidad = profundidad
-    self.expandidos = expandidos
-    self.nombre = "("+str(self.posX)+","+str(self.posY)+")"
-    
-  #Métodos Get
-  def getX(self):
-    return self.posX
+    self.visitados = visitados
+    self.recogidos = recogidos
+    self.nombre = f"({self.x},{self.y})"
   
-  def getY(self):
-    return self.posY
-  
-  def getFaltan(self):
+  #Retorna el altributo faltan
+  def getFaltantes(self):
     return self.faltan
   
-  def getPadre(self):
-    return self.padre
+  #Retorna el altributo visitados
+  def getVisitados(self):
+    return self.visitados
   
-  def getCosto(self):
-    return self.costoAcum
-  
-  def getProfundidad(self):
-    return self.profundidad
-  
-  def getExpandidos(self):
-    return self.expandidos
-  
-  def getValor(self):
-    return matriz[self.posY][self.posX]
-  
-  def getNombre(self):
-    return self.nombre
+  #Retorna el altributo costoAcum
+  def getCostoAcum(self):
+    return self.costoAcum  
   
   #Define la comparación entre nodos
   def __lt__(self, otro):
     return self.costoAcum < otro.costoAcum
   
-  #Define que se muestra al imprimir un nodo
-  def __repr__(self):
-    return self.nombre
-  
-  #Crea una lista con los nodos que se pueden expandir a partir del nodo actual
-  def nodosExpandir(self):
-    lista=[]
+  def expandirNodo(self):
+    lista =[]
+    nuevoFaltan = self.faltan
     
-    #Derecha
-    if self.posX+1 <=9 and getValor(self.posX+1,self.posY)!=1:
-      lista.append((self.posX+1,self.posY))
-      self.expandidos+=1
     
-    #Izquierda
-    if self.posX-1 >=0 and getValor(self.posX-1,self.posY)!=1:
-      lista.append((self.posX-1,self.posY))
-      self.expandidos+=1
+    #Verifico si el nodo actual es un paquete que no ha sido recogido
+    if matriz[self.y][self.x] == 4 and self.nombre not in self.recogidos:
+      nuevoFaltan-=1
+      nuevoRecogidos = self.recogidos + [self.nombre]
+    else:
+      nuevoRecogidos = self.recogidos.copy()
     
-    #Arriba
-    if self.posY-1 >=0 and getValor(self.posX,self.posY-1)!=1:
-      lista.append((self.posX,self.posY-1))
-      self.expandidos+=1
+    #nuevoVisitados = self.visitados +[[self.nombre,nuevoFaltan]]
+    nuevoVisitados = self.visitados +[[self.nombre,self.faltan]]
+    
+    #Condición de parada
+    if nuevoFaltan == 0:
+      self.visitados.append([self.nombre,nuevoFaltan])
+      return None
+    
+    #El orden es derecha, izquierda, arriba, abajo
+    #operador = [(1,0),(-1,0),(0,-1),(0,1)]
+    operador = [(0,-1),(-1,0),(0,1),(1,0)]
+    for i in range (0,len(operador)):
+      nuevoX = self.x+operador[i][0]
+      nuevoY = self.y+operador[i][1]
+      if 0<=nuevoX<=9  and 0<=nuevoY<=9:
+        nuevoValor = matriz[nuevoY][nuevoX]
+        nuevoNombre = f"({nuevoX},{nuevoY})"
+        costoMover = 1 if nuevoValor in (0, 2, 4) else 8 if nuevoValor == 3 else 0
+        if nuevoValor!=1 and [nuevoNombre,nuevoFaltan] not in nuevoVisitados:
+          lista.append(Nodo(nuevoX,nuevoY,nuevoFaltan,self.costoAcum+costoMover,nuevoVisitados,nuevoRecogidos))
       
-    #Abajo
-    if self.posY+1 <=9 and getValor(self.posX,self.posY+1)!=1:
-      lista.append((self.posX,self.posY+1))
-      self.expandidos+=1  
-    
     return lista
-  
-#Obtiene el valor de la matriz en la posición especificada
-def getValor(x,y):
-  global matriz
-  return matriz[y][x]
+        
+      
 
-#Obtiene el costo del movimiento
-def getCosto(valor):
-  if valor in (0, 2, 4):
-    return 1
-  elif valor== 3:
-    return 8
-  else:
-    return 0
-
-#Busca al camino que debe seguir el dron para recoger todos los paquetes
 def buscarSolucion(matrix, x, y, cantPaquetes):
   tiempoInicial = time.time()
-  global arbol, cola, faltantes, recogidos, matriz
+  global matriz
   matriz = matrix
-  faltantes = cantPaquetes
   
-  #Crear y expandir la raiz
-  raiz = Nodo(x, y, cantPaquetes, None, 0, 0, 0)
-  print("Creo la raiz")
-  arbol.append(raiz)
-  nodos=raiz.nodosExpandir()
-  for i in range(0, len(nodos)):
-    nuevoX = nodos[i][0]
-    nuevoY = nodos[i][1]
-    valor = getValor(nuevoX,nuevoY)
-    heapq.heappush(cola,Nodo(nuevoX,nuevoY,cantPaquetes,raiz,getCosto(valor),1,0))
-  print("Expando la raiz")
-  #Tomo cabeza, la añado a resultado, miro si es paquete, miro que nodos se pueden expandir
-  #Y los creo en la cola
+  raiz = Nodo(x,y,cantPaquetes,0,[],[])
+  cantExpandidos=0
+  cola=[raiz]  
+  faltantes = raiz.getFaltantes()
+  
   while faltantes>0:
-    cabeza = heapq.heappop(cola)
-    print(f"Soy {cabeza} y me faltan {faltantes} paquetes")
-    arbol.append(cabeza)
-    '''
-    if cabeza.getValor()==4 and cabeza.getNombre() not in recogidos:
-      recogidos.append(cabeza.getNombre())
-      faltantes-=1
-      print(f"Se recogió el paquete {cabeza}")
-    '''  
-    #(self,x, y, cantPaquetes, padre, costo, profundidad, expandidos)
-    nodos=cabeza.nodosExpandir()
-    for i in range(0, len(nodos)):
-      nuevoX = nodos[i][0]
-      nuevoY = nodos[i][1]
-      nuevoValor = getValor(nuevoX,nuevoY)
-      nuevoCosto = cabeza.getCosto()+getCosto(nuevoValor)
-      nuevaProfundidad = cabeza.getProfundidad()+1
-      nuevoExpandidos = cabeza.getExpandidos()
-      
-      if cabeza.getValor()==4:
-        nuevoFaltantes = cabeza.getFaltan()-1
-        faltantes = nuevoFaltantes
-      else:
-        nuevoFaltantes = cabeza.getFaltan()
-      
-      nuevoNodo = Nodo(nuevoX,nuevoY,nuevoFaltantes,cabeza,nuevoCosto,nuevaProfundidad,nuevoExpandidos)
-      
-      if cabeza.getPadre().getNombre()!=nuevoNodo.getNombre() and cabeza.getPadre().getFaltan()!=nuevoNodo.getFaltan():
-        heapq.heappush(cola,nuevoNodo)
-      
-      #si padre de cabeza es igual a mi, no lo añado
-      #Si valor de cabeza es 4, mi nuevo faltasntes es cabeza-1
-      #Si no, nuevo faltantes es igual a cabeza 
-      
-  #print (arbol)
-  
-  #Tomo el último elemento de la lista, lo añado al resultado
-  #Busco su padre, lo añado a la lista, y busco a ese padre hasta que sea None
-  tiempoFinal = time.time()
-  tiempo = tiempoFinal-tiempoInicial
-  
-  final = arbol[-1]
-  
-  print(f"Los paquetes recogidos fueron {recogidos}")
-  print(f"Cantidad de nodos expandidos: {len(arbol)}")
-  print(f"Cantidad de nodos expandidos V2: {final.getExpandidos()}")
-  print(f"Profundidad del árbol: {final.getProfundidad()}")
-  print(f"Tiempo de ejecución: {round(tiempo,2)} segundos")
-  print(f"Costo de la solución: {final.getCosto()}")
-  
-  resultado.append(final)
-  padre = final.getPadre()
-  print(f"Soy {final} y mi padre es {padre}")
-  while (padre!=None):
-    resultado.append(padre)
-    hijo = padre
-    padre = hijo.getPadre()
-    print(f"Soy {hijo} y mi padre es {padre}")
 
+    cabeza = heapq.heappop(cola)
+    print(f"Expando el nodo {cabeza.nombre}")
+    cantExpandidos+=1
+    faltantes = cabeza.getFaltantes()
+    nodos = cabeza.expandirNodo()
+    if nodos is None:
+      break
+    for i in range(0,len(nodos)):
+      heapq.heappush(cola,nodos[i])
+  
+  tiempoFinal = time.time()
+  tiempo = (tiempoFinal-tiempoInicial)*1000
+  print(f"La ruta a seguir fue: {cabeza.getVisitados()}")
+  return(cantExpandidos,len(cabeza.getVisitados())-1,round(tiempo,3),cabeza.getCostoAcum())
+
+ 
 matrix = [
   [1, 1, 0, 0, 0, 0, 0, 1, 1, 1],
   [1, 1, 0, 1, 0, 1, 0, 1, 1, 1],
@@ -192,4 +108,4 @@ matrix = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ]
 
-buscarSolucion(matrix,1,2,3)
+#buscarSolucion(matrix,1,2,3)
