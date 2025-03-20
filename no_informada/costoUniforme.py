@@ -6,10 +6,9 @@ class Nodo:
         self.posY = y
         self.faltan = cantPaquetes
         self.padre = padre
-        self.visitados = set(visitados)  # Usamos un conjunto para mejor eficiencia
+        self.visitados = set(visitados)  
         self.costoAcum = costo
-        self.profundidad = profundidad
-        self.matriz = matriz  # Se añade la matriz como atributo
+        self.profundidad = profun
 
         self.valor = self.matriz[self.posX][self.posY]
         self.costo = 1 if self.valor in (0, 2, 4) else (8 if self.valor == 3 else float('inf'))
