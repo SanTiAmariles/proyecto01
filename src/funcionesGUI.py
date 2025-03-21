@@ -109,10 +109,10 @@ def buscar(op1, op2, boton):
       exit()
     elif op1.get() == "uniforme":
       print("Costo Uniforme")
-      expandidos,profundidad,tiempo,costo = costoUniforme.buscarSolucion(matriz,x,y,paquetes)
+      expandidos,profundidad,tiempo,costo,rama = costoUniforme.buscarSolucion(matriz,x,y,paquetes)
       showinfo(
         title='Resultados',
-        message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {profundidad}\nTiempo de cómputo: {tiempo} milisegundos\nCosto de la solución: {costo}"
+        message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {profundidad}\nTiempo de cómputo: {tiempo} milisegundos\nCosto de la solución: {costo}\nRuta de la solución: {rama}"
       )
       exit()
     elif op1.get() == "profundidad":
@@ -165,8 +165,8 @@ def procesarMatriz():
     for j in range (0,9):
       if matriz[i][j]==2:
         contInicio+=1
-        y=i
-        x=j
+        x=i
+        y=j
       elif matriz[i][j]==4:
         paquetes+=1        
   
