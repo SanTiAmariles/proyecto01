@@ -24,9 +24,9 @@ def selectFile(button, frame, cell_size, canvas, marcoBotones, grid):
             message="Ha seleccionado el archivo " + file_path
         )
         matriz = gui.cargar_matriz(file_path)
-        print(matriz)  # Para verificar que la matriz se ha cargado correctamente
-        grid.matrix = matriz  # Actualiza la matriz del objeto GridCuadricula
-        grid.dibujar_cuadricula(canvas)  # Redibuja la cuadrícula
+        print(matriz)  # para depurar (la matriz si se carga correctamente)
+        grid.matrix = matriz 
+        grid.dibujar_cuadricula(canvas)
         marcoBotones.grid()
         button.config(state="disabled")
         procesarMatriz(matriz)
