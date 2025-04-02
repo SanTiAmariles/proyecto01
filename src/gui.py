@@ -23,9 +23,10 @@ class GridCuadricula:
         }
         # Imágenes
         self.images = {
-            2: self.load_image(r"C:\Users\Asus\Downloads\proyecto01\assets\dron2.png"),
-            3: self.load_image(r"C:\Users\Asus\Downloads\proyecto01\assets\peligro3.png"),
-            4: self.load_image(r"C:\Users\Asus\Downloads\proyecto01\assets\paquete.png"),
+            2: self.load_image(os.path.join(os.getcwd(), "assets", "dron2.png")),
+            3: self.load_image(os.path.join(os.getcwd(), "assets", "peligro3.png")),
+            4: self.load_image(os.path.join(os.getcwd(), "assets", "paquete.png")),
+            1: self.load_image(os.path.join(os.getcwd(), "assets", "muro2.png")),
         }
 
     def load_image(self, path):
