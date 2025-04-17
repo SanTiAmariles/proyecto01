@@ -1,12 +1,9 @@
-# El orden es derecha, izquierda, arriba, abajo
-"""
-Se puede implementar considerando que siempre se va a expandir el nodo más profundo, cada vez
-que una rama muere (se queda sin solución) salta a otra rama y expande el nodo de la misma,...Evitando ciclos
-"""
 from collections import deque
 
+matriz = []
+
 class Nodo:
-    def __init__(self, matriz, x, y, cantPaquetes, padre=None, visitados=None):
+    def _init_(self, matriz, x, y, cantPaquetes, padre=None, visitados=None):
         self.posicionX = x
         self.posicionY = y
         self.matriz = matriz
@@ -58,22 +55,13 @@ def crearPila(matriz):
     nodoRaiz = Nodo(matriz, inicio_x, inicio_y, cant_paquetes)
     pila = deque([nodoRaiz])
     visitados = set()
-    expandidos = []
-    profundidad_actual = 0
+    expandidos = []  # Lista para contar nodos expandidos
     
     while pila:
         nodoActual = pila.pop()
-        nueva_profundidad = len(reconstruir_camino(nodoActual)) - 1
-        
-        # Detectar cambio de rama
-        if nueva_profundidad < profundidad_actual:
-            print(f"Rama muerta en ({nodoActual.posicionX}, nodoActual.posicionY)")
-            print(f"Retrocediendo a profundidad {nueva_profundidad}")
-        
-        profundidad_actual = nueva_profundidad
         
         if nodoActual.faltan == 0:
-            print(f"\nSe encontró solución")
+            print(f"Se encontró solución")
             print(f"Nodos expandidos: {len(expandidos)}")
             camino = reconstruir_camino(nodoActual)
             print(f"Profundidad de la solución: {len(camino)}")
@@ -84,9 +72,6 @@ def crearPila(matriz):
             expandidos.append(nodoActual)
             
             vecinos = nodoActual.expandir()
-            if not vecinos:
-                print(f"Rama sin salida en ({nodoActual.posicionX}, {nodoActual.posicionY})")
-            
             # Agregamos los vecinos al inicio de la pila (DFS)
             pila.extend(reversed(vecinos))
             
@@ -113,19 +98,6 @@ def reconstruir_camino(nodo):
         nodo = nodo.padre
     return camino[::-1]
 
-# Matriz de prueba
-matriz = [
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1],
-    [1, 1, 0, 1, 0, 1, 0, 1, 1, 1],
-    [0, 2, 0, 3, 4, 0, 0, 0, 0, 0],
-    [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-    [0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-    [3, 3, 0, 1, 0, 1, 1, 1, 1, 1],
-    [1, 1, 0, 1, 0, 0, 0, 0, 0, 0],
-    [1, 1, 0, 1, 1, 1, 1, 1, 1, 0],
-    [1, 1, 0, 0, 0, 0, 4, 0, 0, 0],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
 
 camino = crearPila(matriz)
 if camino:
