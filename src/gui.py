@@ -59,7 +59,7 @@ class GridCuadricula:
                     img = self.images[cell_value]
                     label = tk.Label(canvas, image=img)
                 else:
-                    label = tk.Label(canvas, bg=fill_color)  # Etiqueta vacía con color de fondo
+                    label = tk.Label(canvas, bg=fill_color) 
 
                 label.place(x=(x1 + x2) // 2, y=(y1 + y2) // 2, anchor=tk.CENTER)
                 self.labels[(row, col)] = label 

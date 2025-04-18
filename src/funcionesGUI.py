@@ -76,9 +76,19 @@ def buscar(op1, op2, boton, canvas, cell_size, grid):
                 message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {profundidad}\nTiempo de cómputo: {tiempo} ms\nCosto de la solución: {costo}\nRuta de la solución: {camino}"
             )
         elif op1.get() == "amplitud":
-            camino = amplitud.buscarSolucion(matriz, x, y, paquetes)  # Devuelve lista de nodos
-            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels)
+            print("Amplitud")
+            expandidos, profundidad, tiempo, ruta = amplitud.buscarSolucion(matriz, x, y, paquetes)
+            camino = []
+            for fila, columa in ruta:
+                camino.append((fila, columa))
+
             print(f"Camino calculado: {camino}")
+            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels)
+
+            showinfo(
+                title='Resultados',
+                message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {profundidad}\nTiempo de cómputo: {tiempo} ms\nRuta de la solución: {camino}"
+            )
         elif op1.get() == "profundidad":
             print("Profundidad")
             showinfo(
