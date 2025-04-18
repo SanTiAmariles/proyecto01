@@ -15,6 +15,7 @@ class GridCuadricula:
         self.cell_size = cell_size
         self.grid_size = len(matrix)
         self.image_refs = []
+        self.labels = {}
 
         # Colores
         self.colors = {
@@ -22,11 +23,14 @@ class GridCuadricula:
             1: "grey",  # Obstáculo
         }
         # Imágenes
+        assets_path = os.path.join(os.path.dirname(__file__), '..', 'assets')
         self.images = {
-            2: self.load_image(os.path.join(os.getcwd(), "assets", "dron2.png")),
-            3: self.load_image(os.path.join(os.getcwd(), "assets", "peligro3.png")),
-            4: self.load_image(os.path.join(os.getcwd(), "assets", "paquete.png")),
-            1: self.load_image(os.path.join(os.getcwd(), "assets", "muro2.png")),
+            0: self.load_image(os.path.join(assets_path, "libre.png")),  
+            1: self.load_image(os.path.join(assets_path, "muro2.png")),  
+            2: self.load_image(os.path.join(assets_path, "dron2.png")),
+            3: self.load_image(os.path.join(assets_path, "peligro3.png")),
+            4: self.load_image(os.path.join(assets_path, "paquete.png")),
+            5: self.load_image(os.path.join(assets_path, "fin.png"))
         }
 
     def load_image(self, path):
@@ -51,11 +55,15 @@ class GridCuadricula:
                 fill_color = self.colors.get(cell_value, "white")
                 canvas.create_rectangle(x1, y1, x2, y2, fill=fill_color, outline="black")
 
-                if cell_value in self.images:
+                if cell_value in self.images and self.images[cell_value]:
                     img = self.images[cell_value]
-                    if img:
-                        img_id = canvas.create_image((x1 + x2) // 2, (y1 + y2) // 2, anchor=tk.CENTER, image=img)
-                        self.image_refs.append(img_id)            
+                    label = tk.Label(canvas, image=img)
+                else:
+                    label = tk.Label(canvas, bg=fill_color)  # Etiqueta vacía con color de fondo
+
+                label.place(x=(x1 + x2) // 2, y=(y1 + y2) // 2, anchor=tk.CENTER)
+                self.labels[(row, col)] = label 
+                      
     
 def gui():
     matrizInicial = [[0] * 10 for _ in range(10)]
@@ -99,7 +107,7 @@ def gui():
     rbAvara.grid(row=1, column=1, sticky="w", padx=10, pady=2)
     rbAEstrella.grid(row=2, column=1, sticky="w", padx=10, pady=2)
  
-    bBuscar = ttk.Button(marcoBotones, text="Buscar Solución", command=lambda: funcionesGUI.buscar(opcionNoInformada, opcionInformada, bBuscar), state="disabled")
+    bBuscar = ttk.Button(marcoBotones, text="Buscar Solución", command=lambda: funcionesGUI.buscar(opcionNoInformada, opcionInformada, bBuscar, canvas, cell_size, grid), state="disabled")
     bBuscar.grid(row=4, column=0, columnspan=2, padx=10, pady=2)
 
     marcoBotones.grid_remove()
