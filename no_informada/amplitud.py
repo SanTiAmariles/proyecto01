@@ -1,13 +1,15 @@
 from collections import deque
+import time
+
+matriz = []
 
 class Nodo:
-    def __init__(self, matriz, x, y, cantPaquetes):
-        #Posición inicial del dron
+    def __init__(self, matriz, x, y, cantPaquetes, camino=None):
         self.posicionX = x
         self.posicionY = y
         self.matriz = matriz
-        #Paquetes por recoger
         self.faltan = cantPaquetes
+        self.camino = camino if camino else [(x, y)]
         
     def expandir(self):
         operadores = [
@@ -17,58 +19,65 @@ class Nodo:
             (0, -1)  # Arriba
         ]
 
-        if self.faltan == 0:
-            return ["Fin"]
-        elif (self.faltan >= 0):
-            vecinos = []
-            for dx, dy in operadores:
-                nuevoX = self.posicionX + dx
-                nuevoY = self.posicionY + dy
+        vecinos = []
+        for dx, dy in operadores:
+            nuevoX = self.posicionX + dx
+            nuevoY = self.posicionY + dy
 
-                if 0 <= nuevoX < len(self.matriz) and 0 <= nuevoY < len(self.matriz[0]):
-                    nuevaFaltan = self.faltan  
+            if 0 <= nuevoX < len(self.matriz) and 0 <= nuevoY < len(self.matriz[0]):
+                nuevaFaltan = self.faltan
+                nuevaMatriz = [fila[:] for fila in self.matriz]
 
-                    if self.matriz[nuevoX][nuevoY] == 4:  
-                        nuevaFaltan -= 1
+                if nuevaMatriz[nuevoX][nuevoY] == 4:
+                    nuevaFaltan -= 1
+                    nuevaMatriz[nuevoX][nuevoY] = 0
 
-                    if self.matriz[nuevoX][nuevoY] == 4: 
-                        self.faltan -=1
+                if nuevaMatriz[nuevoX][nuevoY] != 1:
+                    nuevoCamino = self.camino + [(nuevoX, nuevoY)]
+                    nuevoNodo = Nodo(nuevaMatriz, nuevoX, nuevoY, nuevaFaltan, nuevoCamino)
+                    vecinos.append(nuevoNodo)
 
-                    if self.matriz[nuevoX][nuevoY] != 1:  
-                        nuevaCelda = Nodo(self.matriz, nuevoX, nuevoY, self.faltan)
-                        vecinos.append(nuevaCelda)
+        return vecinos
 
-            return vecinos
-
-        
 def crearCola(matriz, x, y, cantPaquetes):
     nodoRaiz = Nodo(matriz, x, y, cantPaquetes)
     cola = deque()
     cola.append(nodoRaiz)
+    visitados = set()  
 
     while cola:
         nodoActual = cola.popleft()
-        if nodoActual == "Fin":
-            print("Se recogieron todos los paquetes con exito")
-            return 1
-        print(nodoActual.posicionX, ",", nodoActual.posicionY)
+        estado_actual = (nodoActual.posicionX, nodoActual.posicionY, nodoActual.faltan)
+
+        # Verificar si el estado ya fue visitado
+        if estado_actual in visitados:
+            continue
+        visitados.add(estado_actual)
+
+        print(f"Expandiendo nodo: ({nodoActual.posicionX}, {nodoActual.posicionY}), Paquetes restantes: {nodoActual.faltan}")
+
+        # Verificar si se han recogido todos los paquetes
+        if nodoActual.faltan == 0:
+            print("Se recogieron todos los paquetes con éxito")
+            print("Camino solución:", nodoActual.camino)
+            return nodoActual.camino
+
+        # Expandir los nodos vecinos
         vecinos = nodoActual.expandir()
         cola.extend(vecinos)
-        
-    
-    
 
-matriz = [
-    [1, 1, 0, 0, 0, 0, 0, 1, 1, 1],
-    [1, 1, 0, 1, 0, 1, 0, 1, 1, 1],
-    [0, 2, 0, 3, 4, 0, 0, 0, 0, 0],
-    [0, 1, 1, 1, 0, 1, 1, 1, 1, 0],
-    [0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
-    [3, 3, 0, 1, 0, 1, 1, 1, 1, 1],
-    [1, 1, 0, 1, 0, 0, 0, 0, 0, 0],
-    [1, 1, 0, 1, 1, 1, 1, 1, 1, 0],
-    [1, 1, 0, 0, 0, 0, 4, 0, 0, 0],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
+    print("No se encontró solución")
+    return []
 
-#crearCola(matriz, 2, 1, 3)
+def buscarSolucion(matriz, x, y, cantPaquetes):
+    inicio = time.time() 
+    camino = crearCola(matriz, x, y, cantPaquetes)
+    fin = time.time() 
+
+    if camino:
+        expandidos = len(camino)  
+        profundidad = len(camino) - 1 
+        tiempo = (fin - inicio) * 1000  
+        return expandidos, profundidad, tiempo, camino
+    else:
+        return 0, 0, 0, []  # Si no hay solución, devuelve valor por defecto
