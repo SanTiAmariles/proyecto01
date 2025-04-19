@@ -70,6 +70,7 @@ def gui():
 
     root = tk.Tk()
     root.title("Proyecto 1 Inteligencia Artificial")
+    root.geometry("+100+0")
 
     marcoPrincipal = ttk.Frame(root)
     marcoPrincipal.grid(padx=20, pady=2)
@@ -95,7 +96,7 @@ def gui():
  
     opcionNoInformada = tk.StringVar(value="amplitud")
     rbAmplitud = tk.Radiobutton(marcoBotones, text="Amplitud", variable=opcionNoInformada, value="amplitud", state="disabled")
-    rbCostoUniforme = tk.Radiobutton(marcoBotones, text="Costo Uniforme", variable=opcionNoInformada, value="uniforme", state="disabled")
+    rbCostoUniforme = tk.Radiobutton(marcoBotones, text="Costo Uniforme", variable=opcionNoInformada, value="costo", state="disabled")
     rbProfundidad = tk.Radiobutton(marcoBotones, text="Profundidad evitando ciclos", variable=opcionNoInformada, value="profundidad", state="disabled")
     rbAmplitud.grid(row=1, column=0, sticky="w", padx=10, pady=2)
     rbCostoUniforme.grid(row=2, column=0, sticky="w", padx=10, pady=2)

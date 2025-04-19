@@ -1,17 +1,18 @@
 import heapq
 import time
+from tkinter.messagebox import showinfo
 
 matriz = []
 
 class Nodo:
   #Constructor de la clase
-  def __init__(self,row, col,paquetes,visitados,recogidos):
+  def __init__(self,row, col,paquetes,costo,visitados,recogidos):
     self.row = row
     self.col = col
     self.faltan = paquetes
+    self.costoAcum = costo
     self.visitados = visitados
     self.recogidos = recogidos
-    self.profundidad = len(self.visitados)
     self.nombre = f"({self.row},{self.col})"
   
   #Retorna el altributo faltan
@@ -22,14 +23,15 @@ class Nodo:
   def getVisitados(self):
     return self.visitados
   
-  #Retorna el altributo profundidad
-  def getProfundidad(self):
-    return self.profundidad
+  #Retorna el altributo costoAcum
+  def getCostoAcum(self):
+    return self.costoAcum  
   
   #Define la comparación entre nodos
   def __lt__(self, otro):
-    return self.profundidad > otro.profundidad
+    return self.costoAcum < otro.costoAcum
   
+  #Expande el nodo
   def expandirNodo(self):
     lista =[]   
     
@@ -49,19 +51,20 @@ class Nodo:
       return None
     
     #El orden es derecha, izquierda, arriba, abajo
-    #operador = [(0,1),(0,-1),(-1,0),(1,0)]
-    operador = [(-1,0),(0,-1),(1,0),(0,1)]
+    operador = [(0,1),(0,-1),(-1,0),(1,0)]
     for i in range (0,len(operador)):
       nuevoRow = self.row+operador[i][0]
       nuevoCol = self.col+operador[i][1]
+      
       #Verificar si nuevo índice está dentro de la matriz
       if 0<=nuevoRow<=9  and 0<=nuevoCol<=9:
         nuevoValor = matriz[nuevoRow][nuevoCol]
         nuevoNombre = f"({nuevoRow},{nuevoCol})"
+        costoMover = 1 if nuevoValor in (0, 2, 4) else 8 if nuevoValor == 3 else 0
         
-        #Verificar que la nueva casilla no sea un muro y haya sido visitada por la rama
+        #Verificar que la nueva casilla no sea un muro ni haya sido visitada por la rama
         if nuevoValor!=1 and [nuevoNombre,nuevoFaltan] not in nuevoVisitados:
-          lista.append(Nodo(nuevoRow,nuevoCol,nuevoFaltan,nuevoVisitados,nuevoRecogidos))
+          lista.append(Nodo(nuevoRow,nuevoCol,nuevoFaltan,self.costoAcum+costoMover,nuevoVisitados,nuevoRecogidos))
       
     return lista
         
@@ -75,12 +78,11 @@ def buscarSolucion(matrix, row, col, cantPaquetes):
   cantExpandidos=0
   
   #Crear nodo raíz y añadirlo a la cola prioritaria
-  raiz = Nodo(row,col,cantPaquetes,[],[])
+  raiz = Nodo(row,col,cantPaquetes,0,[],[])
   cola=[raiz]  
   faltantes = raiz.getFaltantes()
-  
-  #Condición de búsqueda
-  while faltantes>0:
+    
+  while faltantes>0 and len(cola)!=0:
     #Sacar la cabeza de la cola, que es el elemento de menor costo, y expandirlo
     cabeza = heapq.heappop(cola)
     cantExpandidos+=1
@@ -95,6 +97,14 @@ def buscarSolucion(matrix, row, col, cantPaquetes):
     for i in range(0,len(nodos)):
       heapq.heappush(cola,nodos[i])
   
+  #Condición de no solución
+  if (faltantes>0 and len(cola)==0):
+    showinfo(
+      title='Error',
+      message="El laberinto no se pudo resolver usando este método."
+    )
+    exit()
+  
   tiempoFinal = time.time()
   tiempo = (tiempoFinal-tiempoInicial)*1000
-  return(cantExpandidos,len(cabeza.getVisitados())-1,round(tiempo,3),cabeza.getVisitados())
+  return(cantExpandidos,len(cabeza.getVisitados())-1,round(tiempo,3),cabeza.getCostoAcum(),cabeza.getVisitados())

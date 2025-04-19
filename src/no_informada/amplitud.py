@@ -1,5 +1,6 @@
 from collections import deque
 import time
+from tkinter.messagebox import showinfo
 
 matriz = []
 
@@ -53,21 +54,20 @@ def crearCola(matriz, x, y, cantPaquetes):
         if estado_actual in visitados:
             continue
         visitados.add(estado_actual)
-
-        print(f"Expandiendo nodo: ({nodoActual.posicionX}, {nodoActual.posicionY}), Paquetes restantes: {nodoActual.faltan}")
-
+        
         # Verificar si se han recogido todos los paquetes
         if nodoActual.faltan == 0:
-            print("Se recogieron todos los paquetes con éxito")
-            print("Camino solución:", nodoActual.camino)
             return nodoActual.camino
 
         # Expandir los nodos vecinos
         vecinos = nodoActual.expandir()
         cola.extend(vecinos)
 
-    print("No se encontró solución")
-    return []
+    showinfo(
+      title='Error',
+      message="El laberinto no se pudo resolver usando este método."
+    )
+    exit()
 
 def buscarSolucion(matriz, x, y, cantPaquetes):
     inicio = time.time() 
@@ -78,6 +78,6 @@ def buscarSolucion(matriz, x, y, cantPaquetes):
         expandidos = len(camino)  
         profundidad = len(camino) - 1 
         tiempo = (fin - inicio) * 1000  
-        return expandidos, profundidad, tiempo, camino
+        return expandidos, profundidad, round(tiempo,3), camino
     else:
         return 0, 0, 0, []  # Si no hay solución, devuelve valor por defecto
