@@ -4,7 +4,7 @@ from tkinter.messagebox import showinfo
 import gui
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.append("src")
 from no_informada import amplitud, profundidad, costoUniforme
 from informada import aEstrella, avara
 
@@ -25,7 +25,7 @@ def selectFile(button, frame, cell_size, canvas, marcoBotones, grid):
             message="Ha seleccionado el archivo " + file_path
         )
         matriz = gui.cargar_matriz(file_path)
-        print(matriz)  # para depurar
+        print("Matriz: ",matriz)  # para depurar
         grid.matrix = matriz 
         grid.dibujar_cuadricula(canvas)
         marcoBotones.grid()
@@ -57,29 +57,53 @@ def informada(rb1, rb2, rb3, rb4, rb5, b):
     b.config(state=tk.NORMAL)
     tipoBusqueda = "informada"
 
-def buscar(op1, op2, boton):
+def buscar(op1, op2, boton, canvas, cell_size, grid):
     global tipoBusqueda, matriz, x, y, paquetes
     if tipoBusqueda == "noInformada":
-        if op1.get() == "amplitud":
-            #amplitud.crearCola(matriz,x,y,paquetes)
+        if op1.get() == "costo":
+            expandidos, prof, tiempo, costo, ruta = costoUniforme.buscarSolucion(matriz, x, y, paquetes)
+            camino = []
+            for nodo in ruta:
+                nombre = nodo[0] 
+                fila, columna = map(int, nombre.strip("()").split(","))
+                camino.append((fila, columna))
+            
+            print(f"Camino calculado: {camino}")
+            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels)
+            
             showinfo(
                 title='Resultados',
-                message="RESULTADOS DE LA BÚSQUEDA\n\n\nCantidad de nodos expandidos:\n\nProfundidad del árbol:\n\nTiempo de cómputo:"
+                message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms\nCosto de la solución: {costo}"
             )
             exit()
-        elif op1.get() == "uniforme":
-            print("Costo Uniforme")
-            expandidos,profundidad,tiempo,costo,rama = costoUniforme.buscarSolucion(matriz,x,y,paquetes)
+        elif op1.get() == "amplitud":
+            expandidos, prof, tiempo, ruta = amplitud.buscarSolucion(matriz, x, y, paquetes)
+            camino = []
+            for fila, columa in ruta:
+                camino.append((fila, columa))
+
+            print(f"Camino calculado: {camino}")
+            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels)
+
             showinfo(
                 title='Resultados',
-                message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {profundidad}\nTiempo de cómputo: {tiempo} milisegundos\nCosto de la solución: {costo}\nRuta de la solución: {rama}"
+                message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms"
             )
             exit()
         elif op1.get() == "profundidad":
-            print("Profundidad")
+            expandidos, prof, tiempo, ruta = profundidad.buscarSolucion(matriz, x, y, paquetes)
+            camino = []
+            for nodo in ruta:
+                nombre = nodo[0] 
+                fila, columna = map(int, nombre.strip("()").split(","))
+                camino.append((fila, columna))
+            
+            print(f"Camino calculado: {camino}")
+            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels)
+            
             showinfo(
                 title='Resultados',
-                message="RESULTADOS DE LA BÚSQUEDA\n\n\nCantidad de nodos expandidos:\n\nProfundidad del árbol:\n\nTiempo de cómputo:"
+                message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms"
             )
             exit()
         else:
@@ -91,17 +115,35 @@ def buscar(op1, op2, boton):
         boton.config(state=tk.DISABLED)
     elif tipoBusqueda == "informada":
         if op2.get() == "avara":
-            print("Avara")
+            expandidos, prof, tiempo, ruta = avara.buscarSolucion(matriz, x, y, paquetes)
+            camino = []
+            for nodo in ruta:
+                nombre = nodo[0] 
+                fila, columna = map(int, nombre.strip("()").split(","))
+                camino.append((fila, columna))
+            
+            print(f"Camino calculado: {camino}")
+            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels)
+            
             showinfo(
                 title='Resultados',
-                message="RESULTADOS DE LA BÚSQUEDA\n\n\nCantidad de nodos expandidos:\n\nProfundidad del árbol:\n\nTiempo de cómputo:"
+                message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms"
             )
             exit()
         elif op2.get() == "aEstrella":
-            print("A*")
+            expandidos, prof, tiempo, costo, ruta = aEstrella.buscarSolucion(matriz, x, y, paquetes)
+            camino = []
+            for nodo in ruta:
+                nombre = nodo[0] 
+                fila, columna = map(int, nombre.strip("()").split(","))
+                camino.append((fila, columna))
+            
+            print(f"Camino calculado: {camino}")
+            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels)
+            
             showinfo(
                 title='Resultados',
-                message="RESULTADOS DE LA BÚSQUEDA\n\n\nCantidad de nodos expandidos:\n\nProfundidad del árbol:\n\nTiempo de cómputo:\n\nCosto de la solución:"
+                message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms\nCosto de la solución: {costo}"
             )
             exit()
         else:
@@ -134,3 +176,32 @@ def procesarMatriz(matriz):
     if contInicio != 1 or paquetes < 1:
         showinfo(title='Error', message="El laberinto seleccionado no es válido")
         exit()
+
+def animar_dron(canvas, matriz, camino, cell_size, images, labels):
+    pos = 0
+
+    def mover():
+        nonlocal pos
+        if pos < len(camino):
+            fila, columna = camino[pos]
+
+            # Restaurar la casilla anterior
+            if pos > 0:
+                fila_ant, col_ant = camino[pos - 1]
+                labels[(fila_ant, col_ant)].config(image="", bg="red")
+                if matriz[fila_ant][col_ant] == 3: 
+                    casilla_ant = images[3]
+                else:
+                    casilla_ant = images[0] 
+                if casilla_ant:  
+                    labels[(fila_ant, col_ant)].config(image=casilla_ant)
+
+            # Actualizar la posición actual del dron
+            if pos == len(camino) - 1:  
+                labels[(fila, columna)].config(image=images[2])  # Imagen del dron sobre el paquete
+            else:
+                labels[(fila, columna)].config(image=images[2])  # Dron en movimiento
+
+            pos += 1
+            canvas.after(500, mover) 
+    mover()
