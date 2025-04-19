@@ -69,13 +69,13 @@ def buscar(op1, op2, boton, canvas, cell_size, grid):
                 camino.append((fila, columna))
             
             print(f"Camino calculado: {camino}")
-            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels)
-            
-            showinfo(
-                title='Resultados',
-                message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms\nCosto de la solución: {costo}"
-            )
-            exit()
+            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels, callback=lambda:(
+                showinfo(
+                    title='Resultados',
+                    message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms\nCosto de la solución: {costo}"
+                ),
+                exit()
+            ))
         elif op1.get() == "amplitud":
             expandidos, prof, tiempo, ruta = amplitud.buscarSolucion(matriz, x, y, paquetes)
             camino = []
@@ -83,13 +83,13 @@ def buscar(op1, op2, boton, canvas, cell_size, grid):
                 camino.append((fila, columa))
 
             print(f"Camino calculado: {camino}")
-            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels)
-
-            showinfo(
-                title='Resultados',
-                message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms"
-            )
-            exit()
+            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels, callback=lambda:(
+                showinfo(
+                    title='Resultados',
+                    message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms"
+                ),
+                exit()
+            ))
         elif op1.get() == "profundidad":
             expandidos, prof, tiempo, ruta = profundidad.buscarSolucion(matriz, x, y, paquetes)
             camino = []
@@ -99,13 +99,15 @@ def buscar(op1, op2, boton, canvas, cell_size, grid):
                 camino.append((fila, columna))
             
             print(f"Camino calculado: {camino}")
-            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels)
+            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels, callback=lambda:(
+                showinfo(
+                    title='Resultados',
+                    message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms"
+                ),
+                exit()
+            ))
             
-            showinfo(
-                title='Resultados',
-                message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms"
-            )
-            exit()
+            
         else:
             showinfo(
                 title='Error',
@@ -123,13 +125,13 @@ def buscar(op1, op2, boton, canvas, cell_size, grid):
                 camino.append((fila, columna))
             
             print(f"Camino calculado: {camino}")
-            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels)
-            
-            showinfo(
-                title='Resultados',
-                message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms"
-            )
-            exit()
+            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels, callback=lambda:(
+                showinfo(
+                    title='Resultados',
+                    message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms"
+                ),
+                exit()
+            ))
         elif op2.get() == "aEstrella":
             expandidos, prof, tiempo, costo, ruta = aEstrella.buscarSolucion(matriz, x, y, paquetes)
             camino = []
@@ -139,13 +141,13 @@ def buscar(op1, op2, boton, canvas, cell_size, grid):
                 camino.append((fila, columna))
             
             print(f"Camino calculado: {camino}")
-            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels)
-            
-            showinfo(
-                title='Resultados',
-                message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms\nCosto de la solución: {costo}"
-            )
-            exit()
+            animar_dron(canvas, matriz, camino, cell_size, grid.images, grid.labels, callback=lambda:(
+                showinfo(
+                    title='Resultados',
+                    message=f"RESULTADOS DE LA BÚSQUEDA\n\nCantidad de nodos expandidos: {expandidos}\nProfundidad del árbol: {prof}\nTiempo de cómputo: {tiempo} ms\nCosto de la solución: {costo}"
+                ),
+                exit()
+            ))
         else:
             showinfo(
                 title='Error',
@@ -177,7 +179,7 @@ def procesarMatriz(matriz):
         showinfo(title='Error', message="El laberinto seleccionado no es válido")
         exit()
 
-def animar_dron(canvas, matriz, camino, cell_size, images, labels):
+def animar_dron(canvas, matriz, camino, cell_size, images, labels, callback=None):
     pos = 0
 
     def mover():
@@ -203,5 +205,9 @@ def animar_dron(canvas, matriz, camino, cell_size, images, labels):
                 labels[(fila, columna)].config(image=images[2])  # Dron en movimiento
 
             pos += 1
-            canvas.after(500, mover) 
+            canvas.after(500, mover)
+        else:
+            if callback:
+                callback()  # Ejecutar la instrucción después de la animación
+
     mover()
