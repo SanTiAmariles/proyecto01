@@ -52,28 +52,22 @@ def crearCola(matriz, x, y, cantPaquetes):
     nodoRaiz = Nodo(matriz, x, y, cantPaquetes, set())
     cola = deque()
     cola.append(nodoRaiz)
+    exp = []
     #visitados = set()  
 
     while cola:
         nodoActual = cola.popleft()
-        estado_actual = (nodoActual.posicionX, nodoActual.posicionY, nodoActual.faltan)
-        
-        # Verificar si el estado ya fue visitado
-        # if estado_actual in visitados:
-        #     continue
-        # visitados.add(estado_actual)
-        
+        exp.append(nodoActual)
+      
         # Verificar si se han recogido todos los paquetes
         if nodoActual.faltan == 0:
-            return nodoActual.camino
+            return nodoActual.camino,exp
 
         # Expandir los nodos vecinos
         vecinos = nodoActual.expandir()
-        print("Cree vecinos")
         for cadaNodo in vecinos:
             estadoNodo = (cadaNodo.posicionX, cadaNodo.posicionY, cadaNodo.faltan)
             if estadoNodo in nodoActual.visitado:
-                print("Ya pase por aqui ", nodoActual.posicionX, nodoActual.posicionY)
                 continue
             cola.append(cadaNodo)
 
@@ -85,11 +79,11 @@ def crearCola(matriz, x, y, cantPaquetes):
 
 def buscarSolucion(matriz, x, y, cantPaquetes):
     inicio = time.time() 
-    camino = crearCola(matriz, x, y, cantPaquetes)
+    camino, exp = crearCola(matriz, x, y, cantPaquetes)
     fin = time.time() 
 
     if camino:
-        expandidos = len(camino)  
+        expandidos = len(exp)  
         profundidad = len(camino) - 1 
         tiempo = (fin - inicio) * 1000  
         return expandidos, profundidad, round(tiempo,3), camino
