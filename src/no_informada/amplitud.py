@@ -5,12 +5,16 @@ from tkinter.messagebox import showinfo
 matriz = []
 
 class Nodo:
-    def __init__(self, matriz, x, y, cantPaquetes, camino=None):
+    def __init__(self, matriz, x, y, cantPaquetes, visitadosNodo, camino=None):
         self.posicionX = x
         self.posicionY = y
         self.matriz = matriz
         self.faltan = cantPaquetes
         self.camino = camino if camino else [(x, y)]
+        if visitadosNodo is None:
+            visitadosNodo = set()
+        self.visitado = visitadosNodo
+
         
     def expandir(self):
         operadores = [
@@ -35,25 +39,29 @@ class Nodo:
 
                 if nuevaMatriz[nuevoX][nuevoY] != 1:
                     nuevoCamino = self.camino + [(nuevoX, nuevoY)]
-                    nuevoNodo = Nodo(nuevaMatriz, nuevoX, nuevoY, nuevaFaltan, nuevoCamino)
+                    visitadoNuevo = self.visitado.copy()
+                    
+                    estadoActual = (self.posicionX, self.posicionY, self.faltan)
+                    visitadoNuevo.add(estadoActual)
+                    nuevoNodo = Nodo(nuevaMatriz, nuevoX, nuevoY, nuevaFaltan, visitadoNuevo, nuevoCamino)
                     vecinos.append(nuevoNodo)
 
         return vecinos
 
 def crearCola(matriz, x, y, cantPaquetes):
-    nodoRaiz = Nodo(matriz, x, y, cantPaquetes)
+    nodoRaiz = Nodo(matriz, x, y, cantPaquetes, set())
     cola = deque()
     cola.append(nodoRaiz)
-    visitados = set()  
+    #visitados = set()  
 
     while cola:
         nodoActual = cola.popleft()
         estado_actual = (nodoActual.posicionX, nodoActual.posicionY, nodoActual.faltan)
-
+        
         # Verificar si el estado ya fue visitado
-        if estado_actual in visitados:
-            continue
-        visitados.add(estado_actual)
+        # if estado_actual in visitados:
+        #     continue
+        # visitados.add(estado_actual)
         
         # Verificar si se han recogido todos los paquetes
         if nodoActual.faltan == 0:
@@ -61,7 +69,13 @@ def crearCola(matriz, x, y, cantPaquetes):
 
         # Expandir los nodos vecinos
         vecinos = nodoActual.expandir()
-        cola.extend(vecinos)
+        print("Cree vecinos")
+        for cadaNodo in vecinos:
+            estadoNodo = (cadaNodo.posicionX, cadaNodo.posicionY, cadaNodo.faltan)
+            if estadoNodo in nodoActual.visitado:
+                print("Ya pase por aqui ", nodoActual.posicionX, nodoActual.posicionY)
+                continue
+            cola.append(cadaNodo)
 
     showinfo(
       title='Error',
